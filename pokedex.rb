@@ -1,6 +1,6 @@
 require "http"
-# require "tco"
-# require "rmagick"
+require "tco"
+require "rmagick"
 
 system "clear"
 # pokemon = "pikachu" # << Temp. <<
