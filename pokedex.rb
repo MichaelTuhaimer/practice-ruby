@@ -12,6 +12,38 @@ pokemon = gets.chomp.downcase
 response = HTTP.get("https://pokeapi.co/api/v2/pokemon/#{pokemon}")
 data = response.parse
 
+# Create version selector for moves (and more potentially? maybe sprites?) next using tty-prompt
+# Version List:
+# Red
+# Blue
+# Yellow
+# Gold
+# Silver
+# Crystal
+# ^ Work with just this for now
+
+prompt = TTY::Prompt.new
+versions = %w(
+  Red
+  Blue
+  Yellow
+  Gold
+  Silver
+  Crystal
+)
+version = prompt.select("Select version:", versions)
+# Now set chosen value equal to version group
+version
+if version == "Red" || version == "Blue"
+  version = "red-blue"
+elsif version == "Yellow"
+  version = "yellow"
+elsif version == "Gold" || version == "Silver"
+  version = "gold-silver"
+elsif version == "Crystal"
+  version = "crystal"
+end
+
 system "clear"
 
 png = data["sprites"]["versions"]["generation-i"]["red-blue"]["front_default"]
@@ -38,7 +70,6 @@ puts "Weight: #{weight} kg"
 
 puts "
 Base Stats:"
-
 statstable = TTY::Table.new(header: ["Stat Name", "Base Stat"])
 data["stats"].each do |stat|
   statstable << [stat["stat"]["name"], stat["base_stat"]]
@@ -46,8 +77,9 @@ end
 puts statstable.render(:unicode)
 
 puts "
-Level-Up Move List:
-(Version: #{data["moves"][0]["version_group_details"][0]["version_group"]["name"]})"
+Level-Up Move List:"
+# Fix when can get proper version in order
+# (Version: #{data["moves"][0]["version_group_details"][0]["version_group"]["name"]})"
 ordered_levels = []
 data["moves"].each do |move|
   if move["version_group_details"][0]["move_learn_method"]["name"] == "level-up" && move["version_group_details"][0]["version_group"]["name"] == "red-blue"
@@ -70,5 +102,3 @@ ordered_levels.each do |level|
 end
 
 puts movetable.render(:unicode)
-
-# Create version selector for moves next using tty-prompt
