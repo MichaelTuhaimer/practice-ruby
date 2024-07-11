@@ -2,59 +2,255 @@ require "http"
 require "tty-prompt"
 require "tty-table"
 # require "tco"
-# require "rmagick"
+require "io/console"
+require "rmagick"
+require "open-uri"
 
-# pokemon = "pikachu" # << Test <<
 system "clear"
-print "Enter Pokémon: "
-pokemon = gets.chomp.downcase
+pokemon = "pikachu" # << Test <<
+
+puts "                                     ,'\\                              "
+puts "      _.----.         ____         ,'  _\\   ___    ___     ____       "
+puts "  _,-'        `.     |    |  /`.   \\,-'    |   \\  /   |   |    \\  |`. "
+puts "  \\      __     \\    '-.  | /   `.  ___    |    \\/    |   '-.   \\ |  |"
+puts "   \\.    \\ \\    |  __  |  |/    ,','_  `.  |          | __  |    \\|  |"
+puts "     \\    \\/   /,' _ `.|      ,' / / / /   |          ,' _`.|     |  |"
+puts "      \\     ,-'/  /    \\    ,'   | \\/ / ,`.|         /  /   \\  |     |"
+puts "       \\    \\ |   \\_/   |   `-.  \\    `'  /|  |    ||   \\_/  | |\\    |"
+puts "        \\    \\ \\       /       `-.`.___,-' |  |\\  /| \\      /  | |   |"
+puts "         \\    \\ `.__,' |  |`-._    `|      |__| \\/ |  `.__,'|  | |   |"
+puts "          \\_.-'        |__|    `-._ |              '-.|     '-.| |   |"
+puts "                                   `'                            '-._|"
+
+# print "Enter Pokémon: "
+# pokemon = gets.chomp.downcase
 # ^^ keep in final code ^^
 response = HTTP.get("https://pokeapi.co/api/v2/pokemon/#{pokemon}")
 data = response.parse
 
-# Create version selector for moves (and more potentially? maybe sprites?) next using tty-prompt
-# Version List:
-# Red
-# Blue
-# Yellow
-# Gold
-# Silver
-# Crystal
-# ^ Work with just this for now
+# Create version selector for moves (and more potentially?) next using tty-prompt
 
 prompt = TTY::Prompt.new
 versions = %w(
-  Red
-  Blue
+  Red_and_Blue
   Yellow
-  Gold
-  Silver
+  Gold_and_Silver
   Crystal
+  Ruby_and_Sapphire
+  FireRed_and_LeafGreen
+  Emerald
+  Colosseum
+  XD:_Gale_of_Darkness
+  Diamond_and_Pearl
+  Platinum
+  HeartGold_and_SoulSilver
+  Black_and_White
+  Black_2_and_White_2
+  X_and_Y
+  Omega_Ruby_and_Alpha_Sapphire
+  Sun_and_Moon
+  Ultra_Sun_and_Ultra_Moon
+  Let's_Go,_Pikachu!_and_Let's_Go,_Eevee!
+  Sword_and_Shield
+  Brilliant_Diamond_and_Shining_Pearl
+  Scarlet_and_Violet
 )
-version = prompt.select("Select version:", versions)
-# Now set chosen value equal to version group
-version
-if version == "Red" || version == "Blue"
+
+version_choice = prompt.select("Select version:", versions)
+version = version_choice
+
+if version == "Red_and_Blue"
   version = "red-blue"
+  png = data["sprites"]["versions"]["generation-i"]["red-blue"]["front_default"]
 elsif version == "Yellow"
   version = "yellow"
-elsif version == "Gold" || version == "Silver"
+  png = data["sprites"]["versions"]["generation-i"]["yellow"]["front_default"]
+elsif version == "Gold_and_Silver"
   version = "gold-silver"
+  png = data["sprites"]["versions"]["generation-ii"]["gold"]["front_default"]
 elsif version == "Crystal"
   version = "crystal"
+  png = data["sprites"]["versions"]["generation-ii"]["crystal"]["front_default"]
+elsif version == "Ruby_and_Sapphire"
+  version = "ruby-sapphire"
+  png = data["sprites"]["versions"]["generation-iii"]["ruby-sapphire"]["front_default"]
+elsif version == "FireRed_and_LeafGreen"
+  version = "firered-leafgreen"
+  png = data["sprites"]["versions"]["generation-iii"]["firered-leafgreen"]["front_default"]
+elsif version == "Emerald"
+  version = "emerald"
+  png = data["sprites"]["versions"]["generation-iii"]["emerald"]["front_default"]
+elsif version == "Diamond_and_Pearl"
+  version = "diamond-pearl"
+  png = data["sprites"]["versions"]["generation-iv"]["diamond-pearl"]["front_default"]
+elsif version == "Platinum"
+  version = "platinum"
+  png = data["sprites"]["versions"]["generation-iv"]["platinum"]["front_default"]
+elsif version == "HeartGold_and_SoulSilver"
+  version = "heartgold-soulsilver"
+  png = data["sprites"]["versions"]["generation-iv"]["heartgold-soulsilver"]["front_default"]
+elsif version == "Black_and_White"
+  version = "black-white"
+  png = data["sprites"]["versions"]["generation-v"]["black-white"]["front_default"]
+elsif version == "Black_2_and_White_2"
+  version = "black-2-white-2"
+  png = data["sprites"]["versions"]["generation-v"]["black-white"]["front_default"]
+elsif version == "X_and_Y"
+  version = "x-y"
+  png = data["sprites"]["versions"]["generation-vi"]["x-y"]["front_default"]
+elsif version == "Omega_Ruby_and_Alpha_Sapphire"
+  version = "omega-ruby-alpha-sapphire"
+  png = data["sprites"]["versions"]["generation-vi"]["omegaruby-alphasapphire"]["front_default"]
+elsif version == "Sun_and_Moon"
+  version = "sun-moon"
+  png = data["sprites"]["versions"]["generation-vii"]["icons"]["front_default"]
+elsif version == "Ultra_Sun_and_Ultra_Moon"
+  version = "ultra-sun-ultra-moon"
+  png = data["sprites"]["versions"]["generation-vii"]["ultra-sun-ultra-moon"]["front_default"]
+elsif version == "Let's_Go,_Pikachu!_and_Let's_Go,_Eevee!"
+  version = "lets-go-pikachu-lets-go-eevee"
+  png = data["sprites"]["versions"]["generation-viii"]["icons"]["front_default"]
+elsif version == "Sword_and_Shield"
+  version = "sword-shield"
+  png = data["sprites"]["versions"]["generation-viii"]["icons"]["front_default"]
+elsif version == "Brilliant_Diamond_and_Shining_Pearl"
+  version = "brilliant-diamond-and-shining-pearl"
+  png = data["sprites"]["versions"]["generation-viii"]["icons"]["front_default"]
+elsif version == "Scarlet_and_Violet"
+  version = "scarlet-violet"
+  png = data["sprites"]["versions"]["generation-viii"]["icons"]["front_default"]
+elsif version == "Colosseum"
+  version = "colosseum"
+  png = data["sprites"]["other"]["showdown"]["front_default"]
+elsif version == "XD:_Gale_of_Darkness"
+  version = "xd"
+  png = data["sprites"]["other"]["showdown"]["front_default"]
 end
 
 system "clear"
 
-png = data["sprites"]["versions"]["generation-i"]["red-blue"]["front_default"]
+puts "                                     ,'\\                              "
+puts "      _.----.         ____         ,'  _\\   ___    ___     ____       "
+puts "  _,-'        `.     |    |  /`.   \\,-'    |   \\  /   |   |    \\  |`. "
+puts "  \\      __     \\    '-.  | /   `.  ___    |    \\/    |   '-.   \\ |  |"
+puts "   \\.    \\ \\    |  __  |  |/    ,','_  `.  |          | __  |    \\|  |"
+puts "     \\    \\/   /,' _ `.|      ,' / / / /   |          ,' _`.|     |  |"
+puts "      \\     ,-'/  /    \\    ,'   | \\/ / ,`.|         /  /   \\  |     |"
+puts "       \\    \\ |   \\_/   |   `-.  \\    `'  /|  |    ||   \\_/  | |\\    |"
+puts "        \\    \\ \\       /       `-.`.___,-' |  |\\  /| \\      /  | |   |"
+puts "         \\    \\ `.__,' |  |`-._    `|      |__| \\/ |  `.__,'|  | |   |"
+puts "          \\_.-'        |__|    `-._ |              '-.|     '-.| |   |"
+puts "                                   `'                            '-._|"
 
-# img = Magick::Image.read(png).first
+# Pokemon Sprite
+
+# 1)
+# # Method to convert RGB values to an ANSI escape code for background color
+# def rgb_to_ansi_bg(r, g, b)
+#   "\e[48;2;#{r};#{g};#{b}m"
+# end
+# # Get the terminal dimensions
+# term_width, term_height = IO.console.winsize
+# # Read and resize the image
+# img = Magick::Image::read(png).first
+# img = img.resize_to_fit(term_width, term_height)
 # img.each_pixel do |pixel, col, row|
-#   c = [pixel.red, pixel.green, pixel.blue].map { |v| 256 * (v / 65535.0) }
-#   pixel.alpha == 65535 ? print("  ") : print("  ".bg c)
+#   c = [pixel.red, pixel.green, pixel.blue].map { |v| (v * 255.0 / 65535.0).round }
+#   # Debugging output for color values
+#   puts "Pixel at (#{col}, #{row}): R=#{c[0]}, G=#{c[1]}, B=#{c[2]}, Alpha=#{pixel.alpha}" if col % 50 == 0 && row % 50 == 0
+#   if pixel.alpha == Magick::OpaqueAlpha
+#     print "#{rgb_to_ansi_bg(c[0], c[1], c[2])}  \e[0m"
+#   else
+#     print "\e[0m  "
+#   end
 #   puts if col >= img.columns - 1
 # end
 
+# 2)
+# # Method to convert RGB values to an ANSI escape code for background color
+# def rgb_to_ansi_bg(r, g, b)
+#   "\e[48;2;#{r};#{g};#{b}m"
+# end
+# # Get the terminal dimensions
+# term_width, term_height = IO.console.winsize
+# # Adjust for the character height-to-width ratio in the terminal
+# aspect_ratio_correction = 0.55
+# img_width = term_width
+# img_height = (term_height / aspect_ratio_correction).round
+# # Read and resize the image
+# img = Magick::Image::read(png).first
+# img = img.resize_to_fit(img_width, img_height)
+# img.each_pixel do |pixel, col, row|
+#   c = [pixel.red, pixel.green, pixel.blue].map { |v| (v * 255.0 / 65535.0).round }
+#   if pixel.alpha < (Magick::QuantumRange / 2) # Check if the pixel is more opaque than transparent
+#     print "#{rgb_to_ansi_bg(c[0], c[1], c[2])}  \e[0m"
+#   else
+#     print "\e[0m  "
+#   end
+#   puts if col >= img.columns - 1
+# end
+
+# 3)
+# Method to convert RGB values to an ANSI escape code for background color
+def rgb_to_ansi_bg(r, g, b)
+  "\e[48;2;#{r};#{g};#{b}m"
+end
+
+# Get the terminal dimensions dynamically
+def get_terminal_size
+  IO.console.winsize
+end
+
+# Download image from URL and save it to a temporary file
+def download_image(url)
+  temp_file = "/tmp/temp_image.png"
+  URI.open(url) do |image|
+    File.open(temp_file, "wb") do |file|
+      file.write(image.read)
+    end
+  end
+  temp_file
+end
+
+# Main method to render the image in the terminal
+def render_image(image_path)
+  # Get the terminal dimensions
+  term_width, term_height = get_terminal_size
+
+  # Adjust for the character height-to-width ratio in the terminal
+  aspect_ratio_correction = 0.55
+  img_width = term_width
+  img_height = (term_height / aspect_ratio_correction).round
+
+  # Read and resize the image
+  begin
+    img = Magick::Image::read(image_path).first
+  rescue => e
+    puts "Error reading the image: #{e.message}"
+    return
+  end
+
+  img = img.resize_to_fit(img_width, img_height)
+
+  img.each_pixel do |pixel, col, row|
+    c = [pixel.red, pixel.green, pixel.blue].map { |v| (v * 255.0 / 65535.0).round }
+    if pixel.alpha < (Magick::QuantumRange / 2) # Check if the pixel is more opaque than transparent
+      print "#{rgb_to_ansi_bg(c[0], c[1], c[2])}  \e[0m"
+    else
+      print "\e[0m  "
+    end
+    puts if col >= img.columns - 1
+  end
+end
+
+# URL of the image to display
+image_url = png
+# Download the image and get the local path
+image_path = download_image(image_url)
+# Run the script with the downloaded image path
+render_image(image_path)
+
+# Pokemon data
 puts "Pokédex: ##{data["id"]}"
 puts "Pokémon: #{data["name"].capitalize}"
 if data["types"][1] != nil
@@ -68,6 +264,7 @@ puts "Height: #{height} m"
 weight = data["weight"].to_f / 10
 puts "Weight: #{weight} kg"
 
+# Stats Table
 puts "
 Base Stats:"
 statstable = TTY::Table.new(header: ["Stat Name", "Base Stat"])
@@ -76,14 +273,16 @@ data["stats"].each do |stat|
 end
 puts statstable.render(:unicode)
 
+# Move Table
 puts "
-Level-Up Move List:"
-# Fix when can get proper version in order
-# (Version: #{data["moves"][0]["version_group_details"][0]["version_group"]["name"]})"
+Level-Up Move List:
+(Version: #{version_choice})"
 ordered_levels = []
 data["moves"].each do |move|
-  if move["version_group_details"][0]["move_learn_method"]["name"] == "level-up" && move["version_group_details"][0]["version_group"]["name"] == "red-blue"
-    ordered_levels << move["version_group_details"][0]["level_learned_at"]
+  move["version_group_details"].each do |level|
+    if level["move_learn_method"]["name"] == "level-up" && level["version_group"]["name"] == version
+      ordered_levels << level["level_learned_at"]
+    end
   end
 end
 ordered_levels = ordered_levels.uniq.sort
@@ -95,8 +294,10 @@ end
 
 ordered_levels.each do |level|
   data["moves"].each do |move|
-    if move["version_group_details"][0]["level_learned_at"] == level && move["version_group_details"][0]["version_group"]["name"] == "red-blue"
-      movetable << [level, move["move"]["name"]]
+    move["version_group_details"].each do |s_move|
+      if s_move["level_learned_at"] == level && s_move["version_group"]["name"] == version
+        movetable << [level, move["move"]["name"]]
+      end
     end
   end
 end
