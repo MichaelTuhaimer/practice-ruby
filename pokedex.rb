@@ -1,10 +1,9 @@
 require "http"
 require "tty-prompt"
 require "tty-table"
-# require "tco"
+# require "catpix"
 require "io/console"
 require "rmagick"
-require "open-uri"
 
 def title
   puts "                                     ,'\\                              "
@@ -23,9 +22,9 @@ end
 
 system "clear"
 title
-pokemon = "pikachu" # << Test <<
-# print "Enter Pokémon: "
-# pokemon = gets.chomp.downcase
+# pokemon = "pikachu" # << Test <<
+print "Enter Pokémon: "
+pokemon = gets.chomp.downcase
 # ^^ keep in final code ^^
 response = HTTP.get("https://pokeapi.co/api/v2/pokemon/#{pokemon}")
 data = response.parse
@@ -131,6 +130,9 @@ end
 
 system "clear"
 title
+puts "Pokédex: ##{data["id"]}"
+puts "Pokémon: #{data["name"].capitalize}"
+# "#25        Pikachu"
 
 # Pokemon Sprite
 # 1)
@@ -156,92 +158,32 @@ title
 # end
 
 # 2)
-# # Method to convert RGB values to an ANSI escape code for background color
-# def rgb_to_ansi_bg(r, g, b)
-#   "\e[48;2;#{r};#{g};#{b}m"
-# end
-# # Get the terminal dimensions
-# term_width, term_height = IO.console.winsize
-# # Adjust for the character height-to-width ratio in the terminal
-# aspect_ratio_correction = 0.55
-# img_width = term_width
-# img_height = (term_height / aspect_ratio_correction).round
-# # Read and resize the image
-# img = Magick::Image::read(png).first
-# img = img.resize_to_fit(img_width, img_height)
-# img.each_pixel do |pixel, col, row|
-#   c = [pixel.red, pixel.green, pixel.blue].map { |v| (v * 255.0 / 65535.0).round }
-#   if pixel.alpha < (Magick::QuantumRange / 2) # Check if the pixel is more opaque than transparent
-#     print "#{rgb_to_ansi_bg(c[0], c[1], c[2])}  \e[0m"
-#   else
-#     print "\e[0m  "
-#   end
-#   puts if col >= img.columns - 1
-# end
-
-# 3)
 # Method to convert RGB values to an ANSI escape code for background color
 def rgb_to_ansi_bg(r, g, b)
   "\e[48;2;#{r};#{g};#{b}m"
 end
 
-# Get the terminal dimensions dynamically
-def get_terminal_size
-  IO.console.winsize
-end
+# Get the terminal dimensions
+term_width, term_height = IO.console.winsize
 
-# Download image from URL and save it to a temporary file
-def download_image(url)
-  temp_file = "/tmp/temp_image.png"
-  URI.open(url) do |image|
-    File.open(temp_file, "wb") do |file|
-      file.write(image.read)
-    end
+# Read and resize the image
+img = Magick::Image::read(png).first
+
+img.each_pixel do |pixel, col, row|
+  r, g, b = [pixel.red, pixel.green, pixel.blue].map { |v| (v * 255.0 / 65535.0).round }
+  if pixel.alpha == Magick::OpaqueAlpha # Check if the pixel is fully opaque
+    print "#{rgb_to_ansi_bg(r, g, b)}  \e[0m"
+  else
+    print "\e[0m  "
   end
-  temp_file
+  puts if col >= img.columns - 1
 end
-
-# Main method to render the image in the terminal
-def render_image(image_path)
-  # Get the terminal dimensions
-  term_width, term_height = get_terminal_size
-
-  # Adjust for the character height-to-width ratio in the terminal
-  aspect_ratio_correction = 0.55
-  img_width = term_width
-  img_height = (term_height / aspect_ratio_correction).round
-
-  # Read and resize the image
-  begin
-    img = Magick::Image::read(image_path).first
-  rescue => e
-    puts "Error reading the image: #{e.message}"
-    return
-  end
-
-  img = img.resize_to_fit(img_width, img_height)
-
-  img.each_pixel do |pixel, col, row|
-    c = [pixel.red, pixel.green, pixel.blue].map { |v| (v * 255.0 / 65535.0).round }
-    if pixel.alpha < (Magick::QuantumRange / 2) # Check if the pixel is more opaque than transparent
-      print "#{rgb_to_ansi_bg(c[0], c[1], c[2])}  \e[0m"
-    else
-      print "\e[0m  "
-    end
-    puts if col >= img.columns - 1
-  end
-end
-
-# URL of the image to display
-image_url = png
-# Download the image and get the local path
-image_path = download_image(image_url)
-# Run the script with the downloaded image path
-render_image(image_path)
-
+#
+#
+#
+#
+#
 # Pokemon data
-puts "Pokédex: ##{data["id"]}"
-puts "Pokémon: #{data["name"].capitalize}"
 if data["types"][1] != nil
   puts "Type: #{data["types"][0]["type"]["name"]}, #{data["types"][1]["type"]["name"]}"
 else
