@@ -9,26 +9,29 @@ require "pastel"
 color = Pastel.new
 
 def title
-  color = Pastel.new
-  puts color.blue.on_yellow("                                     ,'\\                              ")
-  puts color.yellow("      _.----.         ____         ,'  _\\   ___    ___     ____       ")
-  puts color.yellow("  _,-'        `.     |    |  /`.   \\,-'    |   \\  /   |   |    \\  |`. ")
-  puts color.yellow("  \\      __     \\    '-.  | /   `.  ___    |    \\/    |   '-.   \\ |  |")
-  puts color.yellow("   \\.    \\ \\    |  __  |  |/    ,','_  `.  |          | __  |    \\|  |")
-  puts color.yellow("     \\    \\/   /,' _ `.|      ,' / / / /   |          ,' _`.|     |  |")
-  puts color.yellow("      \\     ,-'/  /    \\    ,'   | \\/ / ,`.|         /  /   \\  |     |")
-  puts color.yellow("       \\    \\ |   \\_/   |   `-.  \\    `'  /|  |    ||   \\_/  | |\\    |")
-  puts color.yellow("        \\    \\ \\       /       `-.`.___,-' |  |\\  /| \\      /  | |   |")
-  puts color.yellow("         \\    \\ `.__,' |  |`-._    `|      |__| \\/ |  `.__,'|  | |   |")
-  puts color.yellow("          \\_.-'        |__|    `-._ |              '-.|     '-.| |   |")
-  puts color.yellow("                                   `'                            '-._|")
+  def t_color(string)
+    Pastel.new.bold.blue.on_yellow(string)
+  end
+
+  puts "                                   " + t_color(",'\\") + "                              "
+  puts "    " + t_color("_.----.") + "         " + t_color("____") + "         " + t_color(",'  _\\") + "   " + t_color("___") + "    " + t_color("___") + "     " + t_color("____") + "       "
+  puts t_color("_,-'        `.") + "     " + t_color("|    |") + "  " + t_color("/`.") + "   " + t_color("\\,-'") + "    " + t_color("|   \\") + "  " + t_color("/   |") + "   " + t_color("|    \\") + "  " + t_color("|`.") + " "
+  puts t_color("\\      __     \\") + "    " + t_color("'-.  |") + " " + t_color("/   `.") + "  ___    " + t_color("|    \\/    |") + "   " + t_color("'-.   \\") + " " + t_color("|  |")
+  puts " " + t_color("\\.    \\ \\    |") + "  __  " + t_color("|  |/    ,','_  `.") + "  " + t_color("|          |") + " __  " + t_color("|    \\|  |")
+  puts "   " + t_color("\\    \\/   /,' _ `.|      ,'") + " " + t_color("/ / / /") + "   " + t_color("|          ,' _`.|     |  |")
+  puts "    " + t_color("\\     ,-'/  /    \\    ,'") + "   " + t_color("| \\/ /") + " " + t_color(",`.|         /  /   \\  |     |")
+  puts "     " + t_color("\\    \\") + " " + t_color("|   \\_/   |   `-.") + "  " + t_color("\\    `'  /|  |    ||   \\_/  | |\\    |")
+  puts "      " + t_color("\\    \\") + " " + t_color("\\       /       `-.`.___,-'") + " " + t_color("|  |\\  /| \\      /  |") + " " + t_color("|   |")
+  puts "       " + t_color("\\    \\") + " " + t_color("`.__,'") + " " + t_color("|  |`-._    `|") + "      " + t_color("|__|") + " " + t_color("\\/") + " " + t_color("|  `.__,'|  |") + " " + t_color("|   |")
+  puts "        " + t_color("\\_.-'") + "        " + t_color("|__|") + "    " + t_color("`-._ |") + "              " + t_color("'-.|") + "     " + t_color("'-.|") + " " + t_color("|   |")
+  puts "                                 " + t_color("`'") + "                            " + t_color("'-._|")
 end
 
 system "clear"
 title
-pokemon = "pikachu" # << Test <<
-# print "Enter Pokémon: "
-# pokemon = gets.chomp.downcase
+# pokemon = "pikachu" # << Test <<
+print "Enter Pokémon: "
+pokemon = gets.chomp.downcase
 # ^^ keep in final code ^^
 response = HTTP.get("https://pokeapi.co/api/v2/pokemon/#{pokemon}")
 data = response.parse
@@ -113,16 +116,16 @@ elsif version == "Ultra_Sun_and_Ultra_Moon"
   png = data["sprites"]["versions"]["generation-vii"]["ultra-sun-ultra-moon"]["front_default"]
 elsif version == "Let's_Go,_Pikachu!_and_Let's_Go,_Eevee!"
   version = "lets-go-pikachu-lets-go-eevee"
-  png = data["sprites"]["versions"]["generation-viii"]["icons"]["front_default"]
+  png = data["sprites"]["front_default"]
 elsif version == "Sword_and_Shield"
   version = "sword-shield"
-  png = data["sprites"]["versions"]["generation-viii"]["icons"]["front_default"]
+  png = data["sprites"]["front_default"]
 elsif version == "Brilliant_Diamond_and_Shining_Pearl"
   version = "brilliant-diamond-and-shining-pearl"
-  png = data["sprites"]["versions"]["generation-viii"]["icons"]["front_default"]
+  png = data["sprites"]["front_default"]
 elsif version == "Scarlet_and_Violet"
   version = "scarlet-violet"
-  png = data["sprites"]["versions"]["generation-viii"]["icons"]["front_default"]
+  png = data["sprites"]["front_default"]
 elsif version == "Colosseum"
   version = "colosseum"
   png = data["sprites"]["other"]["showdown"]["front_default"]
@@ -134,40 +137,14 @@ end
 system "clear"
 # Present visuals about Pokemon
 # title
+term_width, term_height = IO.console.winsize
 a = Artii::Base.new(font: "small")
 puts
-puts color.on_red(a.asciify("  ##{data["id"]}                             #{data["name"].capitalize}   "))
+puts color.bold.on_red(a.asciify("  ##{data["id"]}                             #{data["name"].capitalize}   "))
 # "#25        Pikachu"
 
 # Pokemon Sprite
 # 1)
-# # Method to convert RGB values to an ANSI escape code for background color
-# def rgb_to_ansi_bg(r, g, b)
-#   "\e[48;2;#{r};#{g};#{b}m"
-# end
-# # Get the terminal dimensions
-# term_width, term_height = IO.console.winsize
-# # Read and resize the image
-# img = Magick::Image::read(png).first
-# img = img.resize_to_fit(term_width, term_height)
-# img.each_pixel do |pixel, col, row|
-#   c = [pixel.red, pixel.green, pixel.blue].map { |v| (v * 255.0 / 65535.0).round }
-#   # Debugging output for color values
-#   puts "Pixel at (#{col}, #{row}): R=#{c[0]}, G=#{c[1]}, B=#{c[2]}, Alpha=#{pixel.alpha}" if col % 50 == 0 && row % 50 == 0
-#   if pixel.alpha == Magick::OpaqueAlpha
-#     print "#{rgb_to_ansi_bg(c[0], c[1], c[2])}  \e[0m"
-#   else
-#     print "\e[0m  "
-#   end
-#   puts if col >= img.columns - 1
-# end
-#
-#
-#
-#
-#
-#
-# 2)
 # Method to convert RGB values to an ANSI escape code for background color
 def rgb_to_ansi_bg(r, g, b)
   "\e[48;2;#{r};#{g};#{b}m"
@@ -178,6 +155,7 @@ term_width, term_height = IO.console.winsize
 
 # Read and resize the image
 img = Magick::Image::read(png).first
+# img = img.resize_to_fit(term_width, term_height) # <<< needs to be configured carefully
 
 img.each_pixel do |pixel, col, row|
   r, g, b = [pixel.red, pixel.green, pixel.blue].map { |v| (v * 255.0 / 65535.0).round }
@@ -188,11 +166,7 @@ img.each_pixel do |pixel, col, row|
   end
   puts if col >= img.columns - 1
 end
-#
-#
-#
-#
-#
+
 # Pokemon data
 puts
 if data["types"][1] != nil
