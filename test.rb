@@ -10,8 +10,7 @@ end
 term_width, term_height = IO.console.winsize
 
 # Read and resize the image
-img = Magick::Image::read(png).first
-img = img.resize_to_fit(term_width, term_height)
+img = Magick::Image::read("https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/versions/generation-i/red-blue/132.png").first
 
 img.each_pixel do |pixel, col, row|
   r, g, b = [pixel.red, pixel.green, pixel.blue].map { |v| (v * 255.0 / 65535.0).round }

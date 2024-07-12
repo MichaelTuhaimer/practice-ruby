@@ -1,36 +1,39 @@
 require "http"
 require "tty-prompt"
 require "tty-table"
-# require "catpix"
 require "io/console"
 require "rmagick"
+require "artii"
+require "pastel"
+
+color = Pastel.new
 
 def title
-  puts "                                     ,'\\                              "
-  puts "      _.----.         ____         ,'  _\\   ___    ___     ____       "
-  puts "  _,-'        `.     |    |  /`.   \\,-'    |   \\  /   |   |    \\  |`. "
-  puts "  \\      __     \\    '-.  | /   `.  ___    |    \\/    |   '-.   \\ |  |"
-  puts "   \\.    \\ \\    |  __  |  |/    ,','_  `.  |          | __  |    \\|  |"
-  puts "     \\    \\/   /,' _ `.|      ,' / / / /   |          ,' _`.|     |  |"
-  puts "      \\     ,-'/  /    \\    ,'   | \\/ / ,`.|         /  /   \\  |     |"
-  puts "       \\    \\ |   \\_/   |   `-.  \\    `'  /|  |    ||   \\_/  | |\\    |"
-  puts "        \\    \\ \\       /       `-.`.___,-' |  |\\  /| \\      /  | |   |"
-  puts "         \\    \\ `.__,' |  |`-._    `|      |__| \\/ |  `.__,'|  | |   |"
-  puts "          \\_.-'        |__|    `-._ |              '-.|     '-.| |   |"
-  puts "                                   `'                            '-._|"
+  color = Pastel.new
+  puts color.blue.on_yellow("                                     ,'\\                              ")
+  puts color.yellow("      _.----.         ____         ,'  _\\   ___    ___     ____       ")
+  puts color.yellow("  _,-'        `.     |    |  /`.   \\,-'    |   \\  /   |   |    \\  |`. ")
+  puts color.yellow("  \\      __     \\    '-.  | /   `.  ___    |    \\/    |   '-.   \\ |  |")
+  puts color.yellow("   \\.    \\ \\    |  __  |  |/    ,','_  `.  |          | __  |    \\|  |")
+  puts color.yellow("     \\    \\/   /,' _ `.|      ,' / / / /   |          ,' _`.|     |  |")
+  puts color.yellow("      \\     ,-'/  /    \\    ,'   | \\/ / ,`.|         /  /   \\  |     |")
+  puts color.yellow("       \\    \\ |   \\_/   |   `-.  \\    `'  /|  |    ||   \\_/  | |\\    |")
+  puts color.yellow("        \\    \\ \\       /       `-.`.___,-' |  |\\  /| \\      /  | |   |")
+  puts color.yellow("         \\    \\ `.__,' |  |`-._    `|      |__| \\/ |  `.__,'|  | |   |")
+  puts color.yellow("          \\_.-'        |__|    `-._ |              '-.|     '-.| |   |")
+  puts color.yellow("                                   `'                            '-._|")
 end
 
 system "clear"
 title
-# pokemon = "pikachu" # << Test <<
-print "Enter Pokémon: "
-pokemon = gets.chomp.downcase
+pokemon = "pikachu" # << Test <<
+# print "Enter Pokémon: "
+# pokemon = gets.chomp.downcase
 # ^^ keep in final code ^^
 response = HTTP.get("https://pokeapi.co/api/v2/pokemon/#{pokemon}")
 data = response.parse
 
 # Create version selector for moves (and more potentially?) next using tty-prompt
-
 prompt = TTY::Prompt.new
 versions = %w(
   Red_and_Blue
@@ -129,9 +132,11 @@ elsif version == "XD:_Gale_of_Darkness"
 end
 
 system "clear"
-title
-puts "Pokédex: ##{data["id"]}"
-puts "Pokémon: #{data["name"].capitalize}"
+# Present visuals about Pokemon
+# title
+a = Artii::Base.new(font: "small")
+puts
+puts color.on_red(a.asciify("  ##{data["id"]}                             #{data["name"].capitalize}   "))
 # "#25        Pikachu"
 
 # Pokemon Sprite
@@ -156,7 +161,12 @@ puts "Pokémon: #{data["name"].capitalize}"
 #   end
 #   puts if col >= img.columns - 1
 # end
-
+#
+#
+#
+#
+#
+#
 # 2)
 # Method to convert RGB values to an ANSI escape code for background color
 def rgb_to_ansi_bg(r, g, b)
@@ -184,6 +194,7 @@ end
 #
 #
 # Pokemon data
+puts
 if data["types"][1] != nil
   puts "Type: #{data["types"][0]["type"]["name"]}, #{data["types"][1]["type"]["name"]}"
 else
